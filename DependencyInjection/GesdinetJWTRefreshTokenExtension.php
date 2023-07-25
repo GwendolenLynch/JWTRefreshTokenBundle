@@ -13,6 +13,7 @@ namespace Gesdinet\JWTRefreshTokenBundle\DependencyInjection;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\EntityManager;
+use Gesdinet\JWTRefreshTokenBundle\OpenApi\OpenApiFactory;
 use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\ExtractorInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -54,5 +55,10 @@ final class GesdinetJWTRefreshTokenExtension extends ConfigurableExtension
         }
 
         $container->setAlias('gesdinet_jwt_refresh_token.object_manager', $objectManager);
+
+        $container->getDefinition(OpenApiFactory::class)
+            ->setArgument('$operationId', $mergedConfig['api_platform']['operation_id'])
+            ->setArgument('$tags', $mergedConfig['api_platform']['tags'])
+            ->setArgument('$tokenParameterName', $mergedConfig['token_parameter_name']);
     }
 }

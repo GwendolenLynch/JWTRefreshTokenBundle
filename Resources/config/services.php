@@ -2,6 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use ApiPlatform\OpenApi\Factory\OpenApiFactoryInterface;
 use Gesdinet\JWTRefreshTokenBundle\Command\ClearInvalidRefreshTokensCommand;
 use Gesdinet\JWTRefreshTokenBundle\Command\RevokeRefreshTokenCommand;
 use Gesdinet\JWTRefreshTokenBundle\Doctrine\RefreshTokenManager;
@@ -10,11 +11,12 @@ use Gesdinet\JWTRefreshTokenBundle\EventListener\LogoutEventListener;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGenerator;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\OpenApi\OpenApiFactory;
 use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\ChainExtractor;
 use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\ExtractorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\RequestBodyExtractor;
-use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\RequestParameterExtractor;
 use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\RequestCookieExtractor;
+use Gesdinet\JWTRefreshTokenBundle\Request\Extractor\RequestParameterExtractor;
 use Gesdinet\JWTRefreshTokenBundle\Security\Http\Authentication\AuthenticationFailureHandler;
 use Gesdinet\JWTRefreshTokenBundle\Security\Http\Authentication\AuthenticationSuccessHandler;
 use Gesdinet\JWTRefreshTokenBundle\Security\Http\Authenticator\RefreshTokenAuthenticator;
@@ -127,4 +129,9 @@ return static function (ContainerConfigurator $container) {
             param('gesdinet_jwt_refresh_token.token_parameter_name'),
             param('gesdinet_jwt_refresh_token.cookie'),
         ]);
+
+    $services->set(OpenApiFactory::class)
+        ->decorate(service('api_platform.openapi.factory'))
+        ->arg('$decorated', service(OpenApiFactory::class.'.inner'))
+        ->autoconfigure(false);
 };

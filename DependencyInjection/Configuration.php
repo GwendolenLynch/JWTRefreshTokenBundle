@@ -80,6 +80,21 @@ final class Configuration implements ConfigurationInterface
                     ->defaultValue('refresh_token_expiration')
                     ->info('The default response parameter name containing the refresh token expiration timestamp')
                 ->end()
+                ->arrayNode('api_platform')
+                    ->canBeEnabled()
+                    ->info('API Platform compatibility and OpenAPI documentation.')
+                    ->children()
+                        ->scalarNode('operation_id')
+                            ->defaultValue('jwt_refresh_post')
+                            ->info('OpenAPI operation ID.')
+                        ->end()
+                        ->arrayNode('tags')
+                            ->scalarPrototype()->end()
+                            ->defaultValue(['JWT'])
+                            ->info('Tags to add to the operation in OpenAPI.')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;
